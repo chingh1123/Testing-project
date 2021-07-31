@@ -100,6 +100,52 @@ client.on("message", async (message) => {
         })
     }
 })
+
+//modlog webhook
+client.on('channelCreate', async channel => {
+    let webhook = await channel.guild.fetchWebhooks();
+    let myWeb = webhook.find((myWeb) => myWeb.name === "CGH Logging");
+
+    if(myWeb) {
+        myWeb.send(
+            new MessageEmbed()
+                .setColor('RANDOM')
+                .setDescription(`**Channel Created**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n**Name:** ${channel.name}`)
+                .setTimestamp()
+                .setAuthor(`Moderation Logs`, client.user.avatarURL({ dynamic: true }))
+        )
+    }
+})
+
+client.on('channelDelete', async channel => {
+    let webhook = await channel.guild.fetchWebhooks();
+    let myWeb = webhook.find((myWeb) => myWeb.name === "CGH Logging");
+
+    if(myWeb) {
+        myWeb.send(
+            new MessageEmbed()
+                .setColor('RANDOM')
+                .setDescription(`**__Channel Deleted__**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n**Name:** ${channel.name}`)
+                .setTimestamp()
+                .setAuthor(`Moderation Logs`, client.user.avatarURL({ dynamic: true }))
+        )
+    }
+})
+
+client.on('messageUpdate', async(oldMessage, newMessage) => {
+    const LogChannel = client.channels.cache.get('707182169881182240')
+    const EditedLog = new MessageEmbed()
+    .setTitle("Edited Message")
+    .addField('Edited by', `${oldMessage.author} - (${oldMessage.author.id})`)
+    .addField("In", oldMessage.channel)
+    .addField('Old Message', oldMessage.content)
+    .addField('New Message', newMessage.content)
+    .setColor('RANDOM')
+    .setThumbnail(oldMessage.author.displayAvatarURL({dynamic: true}))
+    await LogChannel.send(EditedLog)
+
+})
+
 const { DiscordTogether } = require('discord-together');
 const Nuggies = require('nuggies');
 require('discord-buttons')(client);
